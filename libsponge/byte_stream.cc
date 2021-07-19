@@ -1,5 +1,5 @@
 #include "byte_stream.hh"
-
+#include <algorithm>
 // Dummy implementation of a flow-controlled in-memory byte stream.
 
 // For Lab 0, please replace with a real implementation that passes the
@@ -12,42 +12,66 @@ void DUMMY_CODE(Targs &&... /* unused */) {}
 
 using namespace std;
 
-ByteStream::ByteStream(const size_t capacity) { DUMMY_CODE(capacity); }
+ByteStream::ByteStream(const size_t capacity) : 
+    buffer(deque<char>()),
+    cap(capacity),
+    size(0),
+    totwr(0),
+    totrd(0),
+    endinput(false) {
+    }
 
 size_t ByteStream::write(const string &data) {
-    DUMMY_CODE(data);
-    return {};
+    size_t wrs = min(remaining_capacity(), data.length());
+    for (size_t i = 0; i < wrs; ++i) {
+        buffer.push_back(data[i]);
+    }
+    size += wrs;
+    totwr += wrs;
+    return {wrs};
 }
 
 //! \param[in] len bytes will be copied from the output side of the buffer
 string ByteStream::peek_output(const size_t len) const {
-    DUMMY_CODE(len);
-    return {};
+    string res{};
+    for (size_t i = 0; i < len; ++i)
+        res += buffer.at(i);
+    return {res};
 }
 
 //! \param[in] len bytes will be removed from the output side of the buffer
-void ByteStream::pop_output(const size_t len) { DUMMY_CODE(len); }
+void ByteStream::pop_output(const size_t len) { 
+    for (size_t i = 0; i < len; ++i)
+        buffer.pop_front();
+    size -= len;
+    totrd += len;
+}
 
 //! Read (i.e., copy and then pop) the next "len" bytes of the stream
 //! \param[in] len bytes will be popped and returned
 //! \returns a string
 std::string ByteStream::read(const size_t len) {
-    DUMMY_CODE(len);
-    return {};
+    string res{};
+    if (!buffer_empty()) {
+        size_t l = min(len, size);
+        res += peek_output(l);
+        pop_output(l);
+    }
+    return {res};
 }
 
-void ByteStream::end_input() {}
+void ByteStream::end_input() { endinput = true; }
 
-bool ByteStream::input_ended() const { return {}; }
+bool ByteStream::input_ended() const { return {endinput}; }
 
-size_t ByteStream::buffer_size() const { return {}; }
+size_t ByteStream::buffer_size() const { return { size }; }
 
-bool ByteStream::buffer_empty() const { return {}; }
+bool ByteStream::buffer_empty() const { return {size == 0}; }
 
-bool ByteStream::eof() const { return false; }
+bool ByteStream::eof() const { return size == 0 && input_ended();}
 
-size_t ByteStream::bytes_written() const { return {}; }
+size_t ByteStream::bytes_written() const { return {totwr}; }
 
-size_t ByteStream::bytes_read() const { return {}; }
+size_t ByteStream::bytes_read() const { return {totrd}; }
 
-size_t ByteStream::remaining_capacity() const { return {}; }
+size_t ByteStream::remaining_capacity() const { return {cap - size}; }
