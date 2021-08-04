@@ -13,7 +13,7 @@ void DUMMY_CODE(Targs &&... /* unused */) {}
 using namespace std;
 
 ByteStream::ByteStream(const size_t capacity) : 
-    buffer(deque<char>()),
+    buffer(),
     cap(capacity),
     size(0),
     totwr(0),

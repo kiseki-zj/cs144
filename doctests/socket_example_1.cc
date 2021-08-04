@@ -1,10 +1,7 @@
 const uint16_t portnum = ((std::random_device()()) % 50000) + 1025;
-
 // create a UDP socket and bind it to a local address
 UDPSocket sock1;
 sock1.bind(Address("127.0.0.1", portnum));
-#include <iostream>
-cout << "1";
 // create another UDP socket and send a datagram to the first socket without connecting
 UDPSocket sock2;
 sock2.sendto(Address("127.0.0.1", portnum), "hi there");
