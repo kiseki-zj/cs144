@@ -11,7 +11,7 @@ void get_URL(const string &host, const string &path) {
     TCPSocket fd;
     Address addr(host, "http");
     fd.connect(addr);
-    string str = "GET " + path + " HTTP/1.1\r\nHost: " + host + "\r\nConnection: close\r\n\r\n";
+    string str = "GET " + path + " HTTP/2.1\r\nHost: " + host + "\r\nConnection: close\r\n\r\n";
     fd.write(str);
     while (!fd.eof()) {
         cout << fd.read();
