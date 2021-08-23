@@ -74,7 +74,7 @@ void StreamReassembler::merge_substr(size_t index, string& data) {
         return ;
     }
     set<substr_t>::iterator it = assembler.lower_bound(substr);
-    if (it == assembler.end()) {
+    if (it == assembler.end()) {                               //情况1：substr后面没有可以merge的
         set<substr_t>::iterator f_it = --it;
         if (index + data.size() <= f_it->index + f_it->data.size()) {
             return ;
@@ -92,7 +92,7 @@ void StreamReassembler::merge_substr(size_t index, string& data) {
             assembler.insert(substr_t(_index, _));
         }
     }
-    else if (it == assembler.begin()) {
+    else if (it == assembler.begin()) {                     //情况2：substr前面没有可以merge的
         if (index + data.size() < it->index) {
             assembler.insert(substr_t(index, data));
             _nUnassembled += data.size();
@@ -126,7 +126,7 @@ void StreamReassembler::merge_substr(size_t index, string& data) {
             _nUnassembled += data.size();
         }
     }
-    else {
+    else {                                                              //情况3：substr前后都有可以merge的，因为每一段都不重复，所以substr后面可能多个merge，substr前面最多一个merge
         int flag = 0;
         while (it != assembler.end()) {
             if (index + data.size() > it->index + it->data.size()) {
