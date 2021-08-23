@@ -5,7 +5,8 @@
 
 #include <cstdint>
 #include <string>
-
+#include <set>
+#include <iostream>
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
 //! possibly overlapping) into an in-order byte stream.
 class StreamReassembler {
@@ -14,7 +15,20 @@ class StreamReassembler {
 
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
-
+    size_t _nAssembled;   //first unassembled = _nAsssembled
+    size_t _nUnassembled;  //size of set
+    bool _eof;  //判断eof段有无全部写入set
+    typedef struct _substr{
+      size_t index;
+      std::string data;
+      bool operator < (const _substr& rhs) const {
+        return index < rhs.index;
+      }
+      _substr(size_t _index, std::string& _data):index(_index), data(_data) {}
+      _substr(size_t _index, const std::string& _data):index(_index), data(_data) {}
+    }substr_t;
+    std::set<substr_t> assembler{};
+    void merge_substr(size_t index, std::string& data);
   public:
     //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.
     //! \note This capacity limits both the bytes that have been reassembled,

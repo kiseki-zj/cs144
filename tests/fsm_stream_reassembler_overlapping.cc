@@ -21,7 +21,6 @@ int main() {
             test.execute(BytesAssembled(2));
             test.execute(BytesAvailable("ab"));
         }
-
         {
             // Overlapping assembled (read) section
             const size_t cap = {1000};
@@ -125,7 +124,6 @@ int main() {
             test.execute(BytesAssembled(4));
             test.execute(UnassembledBytes(0));
         }
-
     } catch (const exception &e) {
         cerr << "Exception: " << e.what() << endl;
         return EXIT_FAILURE;
