@@ -14,18 +14,25 @@
 //! the acknowledgment number and window size to advertise back to the
 //! remote TCPSender.
 class TCPReceiver {
+  private:
+    enum TCPStates {
+        LISTEN = 0,
+        SYN_RECV = 1,
+        FIN_RECV = 2
+    };
+    TCPStates _state;
+    WrappingInt32 _isn;
     //! Our data structure for re-assembling bytes.
     StreamReassembler _reassembler;
 
     //! The maximum number of bytes we'll store.
     size_t _capacity;
-
   public:
     //! \brief Construct a TCP receiver
     //!
     //! \param capacity the maximum number of bytes that the receiver will
     //!                 store in its buffers at any give time.
-    TCPReceiver(const size_t capacity) : _reassembler(capacity), _capacity(capacity) {}
+    TCPReceiver(const size_t capacity) : _state(LISTEN), _isn(0), _reassembler(capacity), _capacity(capacity) {}
 
     //! \name Accessors to provide feedback to the remote TCPSender
     //!@{

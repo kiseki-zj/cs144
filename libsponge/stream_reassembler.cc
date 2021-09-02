@@ -181,4 +181,6 @@ void StreamReassembler::merge_substr(size_t index, string& data) {
 
 size_t StreamReassembler::unassembled_bytes() const { return {_nUnassembled}; }
 
+size_t StreamReassembler::firstunassembled() const { return _nAssembled; }
+
 bool StreamReassembler::empty() const { return {_nUnassembled == 0}; }
