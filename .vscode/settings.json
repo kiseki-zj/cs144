@@ -3,7 +3,8 @@
         "limits": "cpp",
         "stdexcept": "cpp",
         "exception": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "iosfwd": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
