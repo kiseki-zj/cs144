@@ -32,6 +32,16 @@ class TCPSender {
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
 
+    uint64_t _bytes_in_flight{0};
+    int _timer_started{0};
+    size_t _timer_count{0};
+    unsigned int _consecutive_retran_count{0};
+    unsigned int _rto;
+    std::queue<TCPSegment> _segment_outstanding{};
+    uint16_t _window_size{1};
+    uint64_t _ackno{0}; //absolute ack seq
+    bool _sendsyn{true};
+    bool _finsent{false};
   public:
     //! Initialize a TCPSender
     TCPSender(const size_t capacity = TCPConfig::DEFAULT_CAPACITY,
@@ -87,6 +97,7 @@ class TCPSender {
     //! \brief relative seqno for the next byte to be sent
     WrappingInt32 next_seqno() const { return wrap(_next_seqno, _isn); }
     //!@}
+    void send_segment(TCPSegment& seg);
 };
 
 #endif  // SPONGE_LIBSPONGE_TCP_SENDER_HH

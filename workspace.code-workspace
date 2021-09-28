@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"limits": "cpp",
+			"stdexcept": "cpp",
+			"exception": "cpp",
+			"*.tcc": "cpp",
+			"iosfwd": "cpp",
+			"string_view": "cpp",
+			"iostream": "cpp"
+		}
+	}
+}
