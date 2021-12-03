@@ -63,7 +63,7 @@ TCPConnection::~TCPConnection() {
     }
 }
 
-TCPConnection::unclean_shutdown() {
+void TCPConnection::unclean_shutdown() {
     _sender.stream_in().set_error();
     _receiver.stream_out().set_error();
     _active = false;
