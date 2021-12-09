@@ -33,6 +33,7 @@ void TCPSender::fill_window() {
         _seg.header().seqno = _isn;
         _seg.header().syn = true;
         _sendsyn = false;
+        _synsent = true;
         send_segment(_seg);
         return ;
     }
@@ -64,16 +65,17 @@ void TCPSender::fill_window() {
 
 //! \param ackno The remote receiver's ackno (acknowledgment number)
 //! \param window_size The remote receiver's advertised window size
-void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) {
+bool TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) {
     _window_size = window_size;
     uint64_t ack = unwrap(ackno, _isn, _ackno);
+    if (ack > _next_seqno) return false;
     if (_ackno < ack) {
         _ackno = ack;
         _rto = _initial_retransmission_timeout;
         _consecutive_retran_count = 0;
         _timer_count = 0;
     }
-    else return;
+    else return false;
     while (!_segment_outstanding.empty()) {
         TCPHeader _header = _segment_outstanding.front().header();
         if (unwrap(_header.seqno, _isn, _ackno) + _segment_outstanding.front().length_in_sequence_space() <= _ackno) {
@@ -86,6 +88,7 @@ void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_si
         _timer_started = 0;
     }
     fill_window();
+    return true;
 }
 
 //! \param[in] ms_since_last_tick the number of milliseconds since the last call to this method

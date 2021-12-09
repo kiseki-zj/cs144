@@ -40,9 +40,10 @@ class TCPSender {
     std::queue<TCPSegment> _segment_outstanding{};
     uint16_t _window_size{1};
     uint64_t _ackno{0}; //absolute ack seq
-    bool _sendsyn{true};
     bool _finsent{false};
+    bool _synsent{false};
   public:
+    bool _sendsyn{true};
     //! Initialize a TCPSender
     TCPSender(const size_t capacity = TCPConfig::DEFAULT_CAPACITY,
               const uint16_t retx_timeout = TCPConfig::TIMEOUT_DFLT,
@@ -58,7 +59,7 @@ class TCPSender {
     //!@{
 
     //! \brief A new acknowledgment was received
-    void ack_received(const WrappingInt32 ackno, const uint16_t window_size);
+    bool ack_received(const WrappingInt32 ackno, const uint16_t window_size);
 
     //! \brief Generate an empty-payload segment (useful for creating empty ACK segments)
     void send_empty_segment();
@@ -98,6 +99,8 @@ class TCPSender {
     WrappingInt32 next_seqno() const { return wrap(_next_seqno, _isn); }
     //!@}
     void send_segment(TCPSegment& seg);
+    bool fin_sent() { return _finsent; }
+    bool syn_sent() { return _synsent; } 
 };
 
 #endif  // SPONGE_LIBSPONGE_TCP_SENDER_HH

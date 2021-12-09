@@ -22,7 +22,7 @@ class TCPConnection {
     bool _linger_after_streams_finish{true};
     size_t _time_since_last_recv{0};
     bool _active{true};
-
+    bool _send_rst{false};
   public:
     //! \name "Input" interface for the writer
     //!@{
@@ -98,6 +98,8 @@ class TCPConnection {
     //!@}
 
     void unclean_shutdown();
+    void push_segments();
+    void check_shutdown();
 };
 
 #endif  // SPONGE_LIBSPONGE_TCP_FACTORED_HH

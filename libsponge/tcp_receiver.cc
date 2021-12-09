@@ -13,6 +13,7 @@ using namespace std;
 void TCPReceiver::segment_received(const TCPSegment &seg) {
     TCPHeader _header = seg.header();
     Buffer _payload = seg.payload();
+    
     WrappingInt32 _seqno(_header.seqno);
     uint64_t _index;
     bool eof = false;
