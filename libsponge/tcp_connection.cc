@@ -42,8 +42,11 @@ void TCPConnection::segment_received(const TCPSegment &seg) {
     }
     
     if (seg.header().fin) {
-        if (!_sender.fin_sent())
+        //if (!_sender.fin_sent())
+        //    _sender.fill_window();
+        if (!_sender.fin_sent()) {
             _sender.fill_window();
+        }
         send_empty = true;
     }
     else if (seg.length_in_sequence_space()) {
@@ -127,8 +130,8 @@ void TCPConnection::push_segments() {
         if (_receiver.ackno().has_value()) {
             seg.header().ack = true;
             seg.header().ackno = _receiver.ackno().value();
-            seg.header().win = _receiver.window_size();
         }
+        seg.header().win = _receiver.window_size();
         _segments_out.push(seg);
     }
 }

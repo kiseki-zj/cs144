@@ -220,8 +220,8 @@ void TCPSpongeSocket<AdaptT>::connect(const TCPConfig &c_tcp, const FdAdapterCon
         throw runtime_error("After TCPConnection::connect(), state was " + _tcp->state().name() + " but expected " +
                             expected_state.name());
     }
+    _tcp_loop([&]{ return _tcp->state() == TCPState::State::SYN_SENT; });
 
-    _tcp_loop([&] { return _tcp->state() == TCPState::State::SYN_SENT; });
     cerr << "done.\n";
 
     _tcp_thread = thread(&TCPSpongeSocket::_tcp_main, this);
